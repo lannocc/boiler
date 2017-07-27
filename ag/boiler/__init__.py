@@ -11,6 +11,8 @@ Python Steemit bot for automatically following people posting with specified tag
 """
 
 from ag.boiler.__version__ import __version__
-
 print ("Steemit Boiler %s detected" % (__version__))
+
+import ag.logging as log
+log.set(log.INFO)
 

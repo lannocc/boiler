@@ -1,6 +1,8 @@
 # Copyright (C) 2017 Alpha Griffin
 # @%@~LICENSE~@%@
 
+from contextlib import suppress
+
 import ag.logging as log
 
 def usage():
@@ -8,21 +10,31 @@ def usage():
     print("Usage: boiler <command>")
     print()
     print("Where <command> is:")
-    print("   help      - Display this usage screen")
+    print("   help              - Display this usage screen")
+    print("   follow <tag>...   - Actively follow users posting to the specified tag(s)")
     print()
 
 from sys import argv, exit
 
-if len(argv) < 2:
-    usage()
-    exit(1)
-    
-elif argv[1] == 'help':
-    usage()
+with suppress(KeyboardInterrupt):
+    if len(argv) < 2:
+        usage()
+        exit(1)
+        
+    elif argv[1] == 'help':
+        usage()
 
-else:
-    log.error("unknown command", command=argv[1])
-    print("boiler: unknown command: " + argv[1])
-    usage()
-    exit(2)
+    elif argv[1] == 'follow':
+        if len(argv) < 3:
+            usage()
+            exit(2)
+
+        from ag.boiler.follow import run as follow
+        follow(argv[2:])
+
+    else:
+        log.error("unknown command", command=argv[1])
+        print("boiler: unknown command: " + argv[1])
+        usage()
+        exit(99)
 

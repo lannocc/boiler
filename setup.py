@@ -28,10 +28,10 @@ Some of this script logic also taken from:
 
 NS      = 'ag'                          # namespace / meta-package folder
 NAME    = 'boiler'                      # should match source package name in NS folder
-REQUIRE = [ 'sphinx_rtd_theme' ]        # package dependencies
+REQUIRE = [ 'appdirs', 'logging', 'steem', 'sphinx_rtd_theme' ]
 
 DESC    = 'Python Steemit bot for automatically following people posting with specified tags'
-TAGS    = 'steem steemit utilities'           # space-separated list of keywords
+TAGS    = 'steem steemit bot utilities' # space-separated list of keywords
 
 AUTHOR  = 'lannocc'                     # name or alias of author
 EMAIL   = 'lannocc@alphagriffin.com'    # email of author
