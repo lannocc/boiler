@@ -1,10 +1,10 @@
-ag\.pyproject package
+ag\.boiler package
 =====================
 
 Module contents
 ---------------
 
-.. automodule:: ag.pyproject
+.. automodule:: ag.boiler
     :members:
     :undoc-members:
     :show-inheritance:

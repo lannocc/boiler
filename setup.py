@@ -27,11 +27,11 @@ Some of this script logic also taken from:
 #
 
 NS      = 'ag'                          # namespace / meta-package folder
-NAME    = 'pyproject'                   # should match source package name in NS folder
+NAME    = 'boiler'                      # should match source package name in NS folder
 REQUIRE = [ 'sphinx_rtd_theme' ]        # package dependencies
 
-DESC    = 'Alpha Griffin Starter Python Project'
-TAGS    = 'example utilities'           # space-separated list of keywords
+DESC    = 'Python Steemit bot for automatically following people posting with specified tags'
+TAGS    = 'steem steemit utilities'           # space-separated list of keywords
 
 AUTHOR  = 'lannocc'                     # name or alias of author
 EMAIL   = 'lannocc@alphagriffin.com'    # email of author
@@ -46,7 +46,6 @@ CLASS   = [
     'Intended Audience :: Developers',
     'Natural Language :: English',
     'Programming Language :: Python',
-    'Topic :: System :: Installation/Setup',
     'Topic :: Utilities',
 ]
 
