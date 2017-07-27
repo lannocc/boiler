@@ -1,6 +1,8 @@
 Copyright (C) 2017 Alpha Griffin
 @%@~LICENSE~@%@
 
+saw_072717_2 - Make sure command script gets installed during `make install`.
+
 saw_072717_1 - Boiler is functional!
 
 saw_072617_3 - Add simple startup script and "run" Makefile target.

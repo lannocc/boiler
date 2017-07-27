@@ -72,6 +72,7 @@ run:
 
 install:
 	./setup.py install
+	install -pSv boiler /usr/local/bin
 	if [ -d "doc/man" ]; then \
 		install -d /usr/local/share/man/man1; \
 		cp -r doc/man/* /usr/local/share/man/man1; \
