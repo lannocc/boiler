@@ -69,7 +69,7 @@ When running the bot in timely mode, it will first scan your post history to see
 Support
 -------
 
-Alpha Griffin is just a couple guys working on cool projects in our spare time. Join our Gitter chat at https://gitter.im/AlphaGriffin/Lobby for help, suggestions, or just to see what we're up to.
+Alpha Griffin is just a couple guys working on cool projects in our spare time. Join our Gitter chat (https://gitter.im/AlphaGriffin/Lobby) for help, suggestions, or just to see what we're up to.
 
 If you find this software useful, please consider a small STEEM donation to @lannocc.
 
