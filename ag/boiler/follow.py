@@ -12,25 +12,26 @@ import ag.logging as log
 from ag.boiler.config import account, mask
 log.debug("Account credentials loaded", id=account.id, key=mask(account.key))
 
+
 def run(tags):
     log.info("Follow mode activated", tags=tags)
 
     if tags is None or len(tags) < 1:
         raise ValueError("You must specify at least one tag")
 
+    log.debug("initializing...")
     steem = Steem(keys=[account.key])
+    chain = Blockchain(steem)
+    log.debug("ready", steem=steem, blockchain=chain)
 
-    log.debug("getting blockchain")
-    b = Blockchain(steem)
-    log.debug("ready", blockchain=b)
-
+    log.info("Watching for new posts...")
     while True:
-        stream = map(Post, b.stream(filter_by=['comment']))
+        stream = map(Post, chain.stream(filter_by=['comment']))
 
         try:
             for post in stream:
                 if post.is_main_post():
-                    log.debug("found a top-level post: ", author=post.author, tags=post.tags)
+                    log.debug("found a top-level post", author=post.author, tags=post.tags)
 
                     for tag in tags:
                         if tag in post.tags:
@@ -42,7 +43,7 @@ def run(tags):
             log.warn("Post has vanished", exception=e)
 
         except RPCError as e:
-            log.error("RPC problem while following user", exception=e)
+            log.error("RPC problem while streaming posts", exception=e)
 
 
 if __name__ == '__main__':

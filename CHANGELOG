@@ -1,6 +1,8 @@
 Copyright (C) 2017 Alpha Griffin
 @%@~LICENSE~@%@
 
+saw_073117_1 - Add timely mode.
+
 saw_072717_2 - Make sure command script gets installed during `make install`.
 
 saw_072717_1 - Boiler is functional!
