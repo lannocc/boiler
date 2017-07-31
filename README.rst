@@ -56,10 +56,11 @@ This bot can re-post a post at a time you specify. Simply craft a normal post wi
 
 1. **Tag it to your username**. Your username must be the only tag.
 2. **Add timely data on the last line**. The last line of your post must contain the date, time and tags that define when and where it will be re-posted. Here's an example::
-
+```
     This post will be re-posted on Christmas day at 4:20 PM to the 'spam' and 'testing' tags.
 
     2017-12-25 16:20 spam testing
+```
 
 When running the bot in timely mode, it will first scan your post history to see if any timely posts are due (or overdue). It will then continuously scan for any new posts that you make::
 
