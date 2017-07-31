@@ -1,6 +1,8 @@
 Copyright (C) 2017 Alpha Griffin
 @%@~LICENSE~@%@
 
+saw_073117_3 - Do not delete from dictionary while iterating.
+
 saw_073117_2 - Use commit.post() instead of the buggy post.edit().
 
 saw_073117_1 - Add timely mode.

@@ -47,10 +47,13 @@ def run():
     if len(candidates) > 0:
         log.debug("found one or more historical posts to process", posts=candidates)
 
+        deleting = []
         for key, post in candidates.items():
             result = process(commit, post)
             if result or result is None:
-                del candidates[key]
+                deleting.append(key)
+        for key in deleting:
+            del candidates[key]
 
     log.info("Watching for new posts...")
     while True:
@@ -64,10 +67,13 @@ def run():
                     if len(post.tags) == 2 and post.tags[0] == cred.id and post.tags[1] == cred.id:
                         candidates[post.identifier] = post
 
+                deleting = []
                 for key, post in candidates.items():
                     result = process(commit, post)
                     if result or result is None:
-                        del candidates[key]
+                        deleting.append(key)
+                for key in deleting:
+                    del candidates[key]
 
         except PostDoesNotExist as e:
             log.warn("Post has vanished", exception=e)
