@@ -8,6 +8,7 @@ from steem.account import Account
 from steem.blockchain import Blockchain
 from steem.commit import Commit
 from steem.post import Post
+from steem.utils import construct_identifier
 from steembase.exceptions import PostDoesNotExist, RPCError
 
 import ag.logging as log
@@ -116,13 +117,18 @@ def process(commit, post):
 
         body = "This post has boiled! Find it now: "
         body += "\n* https://steemit.com/"+tags[0]+"/@"+post.author+"/"+link
-        body += "\n*Timely posts made possible by the [Alpha Griffin Boiler bot](http://git.alphagriffin.com/AlphaGriffin/boiler).*"
+        body += "\n\n*Timely posts made possible by the [Alpha Griffin Boiler bot](http://git.alphagriffin.com/AlphaGriffin/boiler).*"
 
         meta['tags'] = [post.category, 'boiled']
-        edited = post.edit(
+
+        edited = commit.post(
+                permlink = post.permlink
+                title = post.title,
+                author = post.author,
                 body = body,
-                meta = meta,
-                replace = True
+                tags = meta['tags'],
+                json_metadata = meta,
+                reply_identifier = construct_identifier(post["parent_author"], post["parent_permlink"])
                 )
         log.debug("original post edited!", result=edited)
 
