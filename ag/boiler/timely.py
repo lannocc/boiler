@@ -122,7 +122,7 @@ def process(commit, post):
         meta['tags'] = [post.category, 'boiled']
 
         edited = commit.post(
-                permlink = post.permlink
+                permlink = post.permlink,
                 title = post.title,
                 author = post.author,
                 body = body,
