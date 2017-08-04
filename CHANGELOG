@@ -1,6 +1,8 @@
 Copyright (C) 2017 Alpha Griffin
 @%@~LICENSE~@%@
 
+saw_080417_4 - Supply voter account id to post.upvote().
+
 saw_080417_3 - More fixes for amount. Better exception handling.
 
 saw_080417_2 - Fix for proper usage of Amount class.
