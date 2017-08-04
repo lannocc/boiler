@@ -73,7 +73,7 @@ class Curation():
             if now - post['created'] >= timedelta(minutes=27):
                 if now - post['created'] < timedelta(minutes=30):
                     post.refresh()
-                    payout = Decimal(post.get("pending_payout_value").split(' ')[0])
+                    payout = Decimal(post.get("pending_payout_value").amount())
 
                     if payout > local_max_payout:
                         local_max_payout = payout
