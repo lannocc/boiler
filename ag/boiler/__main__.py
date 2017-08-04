@@ -13,6 +13,7 @@ def usage():
     print("Where <command> is:")
     print("   help              - Display this usage screen")
     print("   follow <tag>...   - Actively follow users posting to the specified tag(s)")
+    print("   curate <tag>...   - Actively curate posts in the specified tag(s)")
     print("   timely            - Actively watch for posts by you tagged to your username, remove them and re-post later")
     print()
 
@@ -33,6 +34,14 @@ with suppress(KeyboardInterrupt):
 
         from ag.boiler.follow import run as follow
         follow(argv[2:])
+
+    elif argv[1] == 'curate':
+        if len(argv) < 3:
+            usage()
+            exit(2)
+
+        from ag.boiler.curate import run as curate
+        curate(argv[2:])
 
     elif argv[1] == 'timely':
         from ag.boiler.timely import run as timely
