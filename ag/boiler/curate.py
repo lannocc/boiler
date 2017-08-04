@@ -68,19 +68,28 @@ class Curation():
         local_max_post = None
 
         for key, post in self.posts.items():
-            now = datetime.utcnow()
+            try:
+                now = datetime.utcnow()
 
-            if now - post['created'] >= timedelta(minutes=27):
-                if now - post['created'] < timedelta(minutes=30):
-                    post.refresh()
-                    payout = Decimal(post.get("pending_payout_value").amount())
+                if now - post['created'] >= timedelta(minutes=27):
+                    if now - post['created'] < timedelta(minutes=30):
+                        post.refresh()
+                        payout = Decimal(post.get("pending_payout_value").amount)
 
-                    if payout > local_max_payout:
-                        local_max_payout = payout
-                        local_max_post = post
+                        if payout > local_max_payout:
+                            local_max_payout = payout
+                            local_max_post = post
 
-            else:
-                try_again[post.identifier] = post
+                else:
+                    try_again[post.identifier] = post
+
+            except PostDoesNotExist as e:
+                log.warn("Post has vanished", exception=e)
+
+            except RPCError as e:
+                log.error("RPC problem while refreshing post", exception=e)
+
+        self.posts = try_again
 
         if local_max_post is not None and local_max_payout > self.max_payout:
             log.info("upvoting post", post=post, elapsed=post.time_elapsed(), payout=local_max_payout)
@@ -91,8 +100,6 @@ class Curation():
 
             if first_vote is None:
                 first_vote = now
-
-        self.posts = try_again
 
 
 def run(tags):
