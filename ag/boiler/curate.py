@@ -96,10 +96,10 @@ class Curation():
             local_max_post.upvote(voter=account.id)
 
             self.max_payout = local_max_payout
-            selv.votes_today += 1
+            self.votes_today += 1
 
-            if first_vote is None:
-                first_vote = now
+            if self.first_vote is None:
+                self.first_vote = now
 
 
 def run(tags):
