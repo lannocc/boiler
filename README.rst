@@ -2,7 +2,7 @@
 Steemit Boiler
 ==============
 
-Python Steemit bot for automatically following people and making timely posts.
+Python Steemit bot for automatically following people, making timely posts, and maximizing curation rewards.
 
 
 Dependencies
@@ -64,6 +64,14 @@ This bot can re-post a post at a time you specify. Simply craft a normal post wi
 When running the bot in timely mode, it will first scan your post history to see if any timely posts are due (or overdue). It will then continuously scan for any new posts that you make::
 
     ./boiler timely
+
+
+Curate Posts
+------------
+
+This bot can attempt to maximize curation rewards by voting on posts that are between 27 and 30 minutes old, up to 11 votes per day. The algorithm looks for posts in the tags you specify with successively higher pending payouts::
+
+    ./boiler curate bitcoin life
 
 
 Support

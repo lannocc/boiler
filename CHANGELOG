@@ -1,6 +1,8 @@
 Copyright (C) 2017 Alpha Griffin
 @%@~LICENSE~@%@
 
+saw_080717_1 - Log the proper post when upvoting. Add curation section to README file.
+
 saw_080517_1 - Fix thy self.
 
 saw_080417_4 - Supply voter account id to post.upvote().
