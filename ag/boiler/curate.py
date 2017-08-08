@@ -91,7 +91,7 @@ class Curation():
                     try_again[post.identifier] = post
 
             except PostDoesNotExist as e:
-                log.warn("Post has vanished", exception=e)
+                log.debug("Post has vanished", exception=e)
 
             except RPCError as e:
                 log.error("RPC problem while refreshing post", exception=e)
