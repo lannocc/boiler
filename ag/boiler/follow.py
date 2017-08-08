@@ -40,7 +40,7 @@ def run(tags):
                             break
 
         except PostDoesNotExist as e:
-            log.warn("Post has vanished", exception=e)
+            log.debug("Post has vanished", exception=e)
 
         except RPCError as e:
             log.error("RPC problem while streaming posts", exception=e)

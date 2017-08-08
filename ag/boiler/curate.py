@@ -34,12 +34,16 @@ class Curation():
             try:
                 for post in stream:
                     self.process()
+                    elapsed = datetime.utcnow() - self.first_vote
 
-                    if self.votes_today > 11:
-                        wait = timedelta(hours=24) - (datetime.utcnow() - self.first_vote)
-                        log.info("Maximum votes reached for today, going to sleep now", wait=wait)
-                        sleep(wait)
+                    if self.votes_today > 11 or elapsed >= timedelta(hours=24):
+                        wait = timedelta(hours=24) - elapsed
 
+                        if wait > 0:
+                            log.info("Maximum votes reached for today, going to sleep now", wait=wait)
+                            sleep(wait)
+
+                        log.info("New day!")
                         self.first_vote = None
                         self.votes_today = 0
                         self.max_payout = Decimal("0")
@@ -51,12 +55,12 @@ class Curation():
 
                         for tag in tags:
                             if tag in post.tags:
-                                log.info("found a possible curation candidate", post=post)
+                                log.debug("found a possible curation candidate", post=post)
                                 self.posts[post.identifier] = post
                                 break
 
             except PostDoesNotExist as e:
-                log.warn("Post has vanished", exception=e)
+                log.debug("Post has vanished", exception=e)
 
             except RPCError as e:
                 log.error("RPC problem while streaming posts", exception=e)

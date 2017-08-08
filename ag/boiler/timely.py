@@ -45,7 +45,7 @@ def run():
                 candidates[post.identifier] = post
 
     if len(candidates) > 0:
-        log.debug("found one or more historical posts to process", posts=candidates)
+        log.info("Found one or more historical posts to process", posts=candidates)
 
         deleting = []
         for key, post in candidates.items():
@@ -76,7 +76,7 @@ def run():
                     del candidates[key]
 
         except PostDoesNotExist as e:
-            log.warn("Post has vanished", exception=e)
+            log.debug("Post has vanished", exception=e)
 
         except RPCError as e:
             log.error("RPC problem while streaming posts", exception=e)

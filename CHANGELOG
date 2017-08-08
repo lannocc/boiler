@@ -1,6 +1,9 @@
 Copyright (C) 2017 Alpha Griffin
 @%@~LICENSE~@%@
 
+saw_080817_1 - Reduce unnecessary output. Reset curation payout threshold after 20 hours even if
+               not all votes have been made.
+
 saw_080717_1 - Log the proper post when upvoting. Add curation section to README file.
 
 saw_080517_1 - Fix thy self.
