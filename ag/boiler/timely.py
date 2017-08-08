@@ -108,7 +108,7 @@ def process(commit, post):
             body = "\n".join(lines[:-2])
         else:
             body = "\n".join(lines[:-1])
-        body += "\n*This post made timely by the [Alpha Griffin Boiler bot](http://git.alphagriffin.com/AlphaGriffin/boiler).*"
+        body += "\n*This post made timely by the [Alpha Griffin Boiler bot](https://github.com/AlphaGriffin/boiler).*"
 
         newpost = commit.post(
                 permlink = link,
@@ -122,8 +122,8 @@ def process(commit, post):
         log.debug("new post committed!", result=newpost)
 
         body = "This post has boiled! Find it now: "
-        body += "\n* https://steemit.com/"+tags[0]+"/@"+post.author+"/"+link
-        body += "\n\n*Timely posts made possible by the [Alpha Griffin Boiler bot](http://git.alphagriffin.com/AlphaGriffin/boiler).*"
+        body += "\n* https://steemit.com/@"+post.author+"/"+link
+        body += "\n\n*Timely posts made possible by the [Alpha Griffin Boiler bot](https://github.com/AlphaGriffin/boiler).*"
 
         meta['tags'] = [post.category, 'boiled']
 
