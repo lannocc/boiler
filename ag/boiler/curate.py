@@ -99,7 +99,8 @@ class Curation():
         self.posts = try_again
 
         if local_max_post is not None and local_max_payout > self.max_payout:
-            log.info("upvoting post", post=local_max_post, elapsed=local_max_post.time_elapsed(), payout=local_max_payout)
+            log.info("Upvoting post #{}".format(self.votes_today + 1),
+                    post=local_max_post, elapsed=local_max_post.time_elapsed(), payout=local_max_payout)
             local_max_post.upvote(voter=account.id)
 
             self.max_payout = local_max_payout
