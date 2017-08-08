@@ -34,21 +34,23 @@ class Curation():
             try:
                 for post in stream:
                     self.process()
-                    elapsed = datetime.utcnow() - self.first_vote
 
-                    if self.votes_today > 11 or elapsed >= timedelta(hours=24):
-                        wait = timedelta(hours=24) - elapsed
+                    if self.first_vote is not None:
+                        elapsed = datetime.utcnow() - self.first_vote
 
-                        if wait > 0:
-                            log.info("Maximum votes reached for today, going to sleep now", wait=wait)
-                            sleep(wait)
+                        if self.votes_today > 11 or elapsed >= timedelta(hours=24):
+                            wait = timedelta(hours=24) - elapsed
 
-                        log.info("New day!")
-                        self.first_vote = None
-                        self.votes_today = 0
-                        self.max_payout = Decimal("0")
+                            if wait > 0:
+                                log.info("Maximum votes reached for today, going to sleep now", wait=wait)
+                                sleep(wait)
 
-                        break
+                            log.info("New day!")
+                            self.first_vote = None
+                            self.votes_today = 0
+                            self.max_payout = Decimal("0")
+
+                            break
 
                     if post.is_main_post():
                         log.debug("found a top-level post", post=post, elapsed=post.time_elapsed(), tags=post.tags, total_payout=post.get("total_payout_value"), pending_payout=post.get("pending_payout_value"))
