@@ -19,8 +19,9 @@ log.debug("Account credentials loaded", id=account.id, key=mask(account.key))
 
 class Curation():
 
-    def __init__(self, chain):
+    def __init__(self, chain, min_payout):
         self.chain = chain
+        self.min_payout = min_payout
         self.posts = {}                 # queue of curation candidates, keyed by post id
         self.first_vote = None          # time of our first vote (today)
         self.votes_today = 0            # number of times we have voted in the 24 hours since first_vote
@@ -82,11 +83,11 @@ class Curation():
                         post.refresh()
                         payout = Decimal(post.get("pending_payout_value").amount)
 
-                        if payout > local_max_payout:
+                        if payout >= self.min_payout and payout > local_max_payout:
                             local_max_payout = payout
                             local_max_post = post
 
-                else:
+                else:  # post is not mature enough yet, check it again later
                     try_again[post.identifier] = post
 
             except PostDoesNotExist as e:
@@ -108,7 +109,7 @@ class Curation():
                 self.first_vote = now
 
 
-def run(tags):
+def run(tags, min_payout=Decimal('0.50')):
     log.info("Curate mode activated", tags=tags)
 
     if tags is None or len(tags) < 1:
@@ -117,8 +118,8 @@ def run(tags):
     log.debug("initializing...")
     steem = Steem(keys=[account.key])
     chain = Blockchain(steem)
-    curation = Curation(chain)
-    log.debug("ready", steem=steem, blockchain=chain)
+    curation = Curation(chain, min_payout)
+    log.debug("ready", steem=steem, blockchain=chain, curator=curation)
 
     curation.watch(tags)
 

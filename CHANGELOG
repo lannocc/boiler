@@ -1,6 +1,8 @@
 Copyright (C) 2017 Alpha Griffin
 @%@~LICENSE~@%@
 
+saw_080817_5 - Set a minimum curation payout of $0.50.
+
 saw_080817_4 - Fix error in curate mode introduced in saw_080817_1.
 
 saw_080817_3 - Exclude posts with 'boiled' tag.
