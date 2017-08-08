@@ -1,6 +1,8 @@
 Copyright (C) 2017 Alpha Griffin
 @%@~LICENSE~@%@
 
+saw_080817_2 - Allow other tags to be present in original timely posts.
+
 saw_080817_1 - Reduce unnecessary output. Reset curation payout threshold after 20 hours even if
                not all votes have been made.
 

@@ -41,7 +41,7 @@ def run():
         if post.is_main_post():
             log.debug("found a top-level post", post=post, tags=post.tags)
 
-            if len(post.tags) == 2 and post.tags[0] == cred.id and post.tags[1] == cred.id:
+            if post.tags[0] == cred.id:
                 candidates[post.identifier] = post
 
     if len(candidates) > 0:
