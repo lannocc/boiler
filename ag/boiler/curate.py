@@ -42,9 +42,9 @@ class Curation():
                         if self.votes_today > 11 or elapsed >= timedelta(hours=24):
                             wait = timedelta(hours=24) - elapsed
 
-                            if wait > 0:
+                            if wait.total_seconds() > 0:
                                 log.info("Maximum votes reached for today, going to sleep now", wait=wait)
-                                sleep(wait)
+                                sleep(wait.total_seconds())
 
                             log.info("New day!")
                             self.first_vote = None
