@@ -2,7 +2,7 @@
 Steemit Boiler
 ==============
 
-Python Steemit bot for automatically following people, making timely posts, and maximizing curation rewards.
+Python Steemit bot for automatically following people, making timely posts, maximizing curation rewards, and posting market summaries.
 
 
 Dependencies
@@ -72,6 +72,14 @@ Curate Posts
 This bot can attempt to maximize curation rewards by voting on posts that are between 27 and 30 minutes old, up to 11 votes per day. The algorithm looks for posts in the tags you specify with successively higher pending payouts::
 
     ./boiler curate bitcoin life
+
+
+Summarize Market
+----------------
+
+This bot can automatically post a cryptocurrency market summary for any given currency pair. Poloniex is used for market data, so the pair must exist there. If there is an RPC error while posting (usually because you've exceeded your STEEM bandwidth allocation) then it will keep trying every minute for up to an hour. To summarize a market, simply invoke market mode with a currency pair, post title, and tag(s)::
+
+    ./boiler market btc-usdt "Summarizing the Bitcoin Market" bitcoin spam
 
 
 Support
