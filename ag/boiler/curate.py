@@ -54,7 +54,8 @@ class Curation():
                             break
 
                     if post.is_main_post():
-                        log.debug("found a top-level post", post=post, elapsed=post.time_elapsed(), tags=post.tags, total_payout=post.get("total_payout_value"), pending_payout=post.get("pending_payout_value"))
+                        log.debug("found a top-level post", post=post, elapsed=post.time_elapsed(), tags=post.tags,
+                                total_payout=post.get("total_payout_value"), pending_payout=post.get("pending_payout_value"))
 
                         for tag in tags:
                             if tag in post.tags:

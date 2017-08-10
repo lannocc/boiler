@@ -3,5 +3,5 @@
 # Copyright (C) 2017 Alpha Griffin
 # @%@~LICENSE~@%@
 
-python3 -m ag.boiler $@
+python3 -m ag.boiler "$@"
 

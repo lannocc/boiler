@@ -15,6 +15,9 @@ def usage():
     print("   follow <tag>...   - Actively follow users posting to the specified tag(s)")
     print("   curate <tag>...   - Actively curate posts in the specified tag(s)")
     print("   timely            - Actively watch for posts by you tagged to your username, remove them and re-post later")
+    print("   market <pair> <title> <tag>...")
+    print("                     - Automatically compose cryptocurrency market summary for the given currency pair,")
+    print("                       using supplied title and tag(s)")
     print()
 
 from sys import argv, exit
@@ -32,20 +35,28 @@ with suppress(KeyboardInterrupt):
             usage()
             exit(2)
 
-        from ag.boiler.follow import run as follow
-        follow(argv[2:])
+        from ag.boiler.follow import run
+        run(argv[2:])
 
     elif argv[1] == 'curate':
         if len(argv) < 3:
             usage()
-            exit(2)
+            exit(3)
 
-        from ag.boiler.curate import run as curate
-        curate(argv[2:])
+        from ag.boiler.curate import run
+        run(argv[2:])
 
     elif argv[1] == 'timely':
-        from ag.boiler.timely import run as timely
-        timely()
+        from ag.boiler.timely import run
+        run()
+
+    elif argv[1] == 'market':
+        if len(argv) < 5:
+            usage()
+            exit(4)
+
+        from ag.boiler.market import run
+        run(argv[2:])
 
     else:
         log.error("unknown command", command=argv[1])

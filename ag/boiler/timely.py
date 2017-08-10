@@ -108,7 +108,13 @@ def process(commit, post):
             body = "\n".join(lines[:-2])
         else:
             body = "\n".join(lines[:-1])
-        body += "\n*This post made timely by the [Alpha Griffin Boiler bot](https://github.com/AlphaGriffin/boiler).*"
+
+        body += "\n---"
+        body += "\n<center>*This post made timely by:"
+        body += "\n[![Alpha Griffin logo](http://alphagriffin.com/usr/include/ag/favicon/favicon-128.png)"
+        body += "\nAlpha Griffin Boiler bot](https://github.com/AlphaGriffin/boiler)"
+        body += "\nv" + __version__ + "*</center>"
+
 
         newpost = commit.post(
                 permlink = link,
@@ -121,9 +127,13 @@ def process(commit, post):
                 )
         log.debug("new post committed!", result=newpost)
 
-        body = "This post has boiled! Find it now: "
+        body = "This post has boiled! Find it now here:"
         body += "\n* https://steemit.com/@"+post.author+"/"+link
-        body += "\n\n*Timely posts made possible by the [Alpha Griffin Boiler bot](https://github.com/AlphaGriffin/boiler).*"
+        body += "\n---"
+        body += "\n<center>*Timely posts made possible by:"
+        body += "\n[![Alpha Griffin logo](http://alphagriffin.com/usr/include/ag/favicon/favicon-128.png)"
+        body += "\nAlpha Griffin Boiler bot](https://github.com/AlphaGriffin/boiler)"
+        body += "\nv" + __version__ + "*</center>"
 
         meta['tags'] = [post.category, 'boiled']
 
