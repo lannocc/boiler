@@ -10,7 +10,7 @@ Dependencies
 
 Tested in Python 3.6 in Linux and OSX.
 
-Requires the following Python modules installed::
+Requires the following Python modules installed:
 
 * appdirs
 * ag.logging (aka logpy: https://git.alphagriffin.com/AlphaGriffin/logpy)
