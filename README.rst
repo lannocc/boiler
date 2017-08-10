@@ -24,7 +24,7 @@ To build and install this application to the local system::
 
     make all && sudo make install
 
-The above command installs the python module and `boiler` command to your system.
+The above command installs the python module and ``boiler`` command to your system.
 
 Alternatively, you can run the application in-place without installing::
 
@@ -74,8 +74,8 @@ This bot can attempt to maximize curation rewards by voting on posts that are be
     ./boiler curate bitcoin life
 
 
-Summarize Market
-----------------
+Summarize the Market
+--------------------
 
 This bot can automatically post a cryptocurrency market summary for any given currency pair. Poloniex is used for market data, so the pair must exist there. If there is an RPC error while posting (usually because you've exceeded your STEEM bandwidth allocation) then it will keep trying every minute for up to an hour. To summarize a market, simply invoke market mode with a currency pair, post title, and tag(s)::
 
