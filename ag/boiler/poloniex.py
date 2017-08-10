@@ -36,6 +36,15 @@ class Poloniex:
             ret = requests.get('https://poloniex.com/public?command=' + command, timeout=self.timeout)
             return ret.json()
 
+        else:
+            url = 'https://poloniex.com/public?command=' + command
+
+            for key, data in req.items():
+                url += '&' + key + '=' + str(data)
+
+            ret = requests.get(url, timeout=self.timeout)
+            return ret.json()
+
     def ticker(self):
         return self.api("returnTicker")
 

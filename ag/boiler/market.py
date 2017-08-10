@@ -45,39 +45,118 @@ class Market():
             log.error("Currency pair not found in ticker data", symbol=self.symbol, against=self.against, exception=e)
             raise ValueError("Currency pair not found in ticker data")
 
-        now = datetime.now(get_localzone())
+        tz = get_localzone()
+        now = datetime.now(tz)
         nowstr = now.strftime('%Y-%m-%d %H:%M:%S %Z')
         log.debug("got ticker data", now=nowstr, ticker=ticker)
 
         last = Decimal(ticker['last'])
         if self.against == 'USDT' or self.against == 'USD':
             symbol = '$'
-            laststr = symbol + str(last.quantize(Decimal('0.00')))
+            quant = Decimal('0.00')
         else:
             symbol = ''
-            laststr = str(last.quantize(Decimal('0.00000000')))
+            quant = Decimal('0.00000000')
+        laststr = symbol + str(last.quantize(quant))
         log.debug("last trade", value=laststr)
 
         nowfile = path.join(dir, 'market.'+self.symbol+'-'+self.against+'.time')
-        with open(nowfile, 'w') as out:
-            out.write(now.strftime("%s"))
-
         lastfile = path.join(dir, 'market.'+self.symbol+'-'+self.against+'.last')
-        with open(lastfile, 'w') as out:
-            out.write(str(last))
+
+        if path.exists(nowfile) and path.exists(lastfile):
+            prev = True
+
+            with open(nowfile, 'r') as infile:
+                prev_now = datetime.fromtimestamp(int(infile.readline().strip()), tz=tz)
+
+            with open(lastfile, 'r') as infile:
+                prev_last = Decimal(infile.readline().strip())
+
+            prev_permlink = self.make_permlink(prev_now)
+            prev_nowstr =   prev_now.strftime('%Y-%m-%d %H:%M:%S %Z')
+
+            change_price = last - prev_last
+            if change_price < Decimal('0'):
+                change_pricestr = symbol + str(change_price.copy_negate().quantize(quant))
+            else:
+                change_pricestr = symbol + str(change_price.quantize(quant))
+
+            change_pct = (Decimal('100') * change_price / prev_last).quantize(Decimal('0.0'))
+            if change_pct < Decimal('0'):
+                change_pctstr = str(change_pct.copy_negate()) + '%'
+            else:
+                change_pctstr = str(change_pct) + '%'
+
+            data = self.api.chartData(
+                    pair=self.against+'_'+self.symbol,
+                    start=int(prev_now.strftime("%s"))+1,
+                    period=300
+                    )
+
+            highest = last
+            lowest = last
+
+            if len(data) < 0:
+                raise ValueError("No data returned")
+            elif len(data) == 1 and int(data[0]['date']) == 0:
+                raise ValueError("Too soon! You must wait at least 5 minutes between summaries.")
+
+            for row in data:
+                high = Decimal(row['high'])
+                if high > highest:
+                    highest = high
+
+                low = Decimal(row['low'])
+                if low < lowest:
+                    lowest = low
+
+            higheststr = symbol + str(highest.quantize(quant))
+            loweststr = symbol + str(lowest.quantize(quant))
+        else:
+            prev = False
 
         body = "Market Summary for " + self.symbol
         body += "\n=="
         body += "\n* All prices in *" + self.against + "*"
         body += "\n---"
         body += "\n"
-        body += "\n*This is the first market summary, so no previous comparison data is available.*"
+        if prev:
+            if change_pct > Decimal('0'):
+                body += "\nUp " + change_pctstr
+            elif change_pct < Decimal('0'):
+                body += "\nDown " + change_pctstr
+            else:
+                body += "\nFlat"
+            body += "\n-"
+            body += "\n" + self.symbol + "** "
+            if change_price > Decimal('0'):
+                body += "gained " + change_pricestr
+            elif change_price < Decimal('0'):
+                body += "lost " + change_pricestr
+            else:
+                body += "had no change"
+            body += "** since the [last market summary]"
+            body += "(https://steemit.com/@" + account.id + "/" + prev_permlink + ")"
+            if change_pct > Decimal('0'):
+                body += ", a change of **" + change_pctstr + "**"
+            elif change_pct < Decimal('0'):
+                body += ", a change of **-" + change_pctstr + "**"
+            body += "."
+        else:
+            body += "\n*This is the first market summary, so no previous comparison data is available.*"
         body += "\n"
         body += "\n* Last trade: *" + laststr + "*"
+        if prev:
+            body += "\n* Highest trade: *" + higheststr + "*"
+            body += "\n* Lowest trade: *" + loweststr + "*"
         body += "\n"
+        # TODO: insert chart here
         body += "\n---"
         body += "\n"
         body += "\n* Snapshot taken at *" + nowstr + "*"
+        if prev:
+            body += "\n* Previous snapshot: *[" + prev_nowstr + "]"
+            body += "(https://steemit.com/@" + account.id + "/" + prev_permlink + ")*"
         body += "\n* Quote data from [Poloniex](http://poloniex.com)"
         body += "\n"
         body += "\n<center>Happy trading... stay tuned for the next summary!</center>"
@@ -88,16 +167,17 @@ class Market():
         body += "\nAlpha Griffin Boiler bot](https://github.com/AlphaGriffin/boiler)"
         body += "\nv" + __version__ + "*</center>"
 
-        #print(body)
+        print(body)  # FIXME
 
-        permlink = 'market-summary-' + self.symbol + '-' + self.against + '-' + now.strftime('%Y-%m-%d-%H-%M-%S-%Z')
-        permlink = permlink.lower()  # STEEM permlinks must be all lowercase
+        permlink = self.make_permlink(now)
         tries = 0
         post = None
 
         while tries < self.max_tries:
             try:
                 log.info("Posting summary...", permlink=permlink, title=title, last=laststr, tags=tags)
+
+                break  # FIXME
 
                 post = self.commit.post(
                         permlink = permlink,
@@ -117,10 +197,23 @@ class Market():
 
         if post is not None:
             log.info("Summary posted successfully", post=post)
+
+            with open(nowfile, 'w') as out:
+                out.write(now.strftime("%s"))
+
+            with open(lastfile, 'w') as out:
+                out.write(str(last))
+
             return True
+
         else:
             log.error("Failed to post summary")
             return False
+
+    def make_permlink(self, when):
+        permlink = 'market-summary-' + self.symbol + '-' + self.against + '-' + when.strftime('%Y-%m-%d-%H-%M-%S-%Z')
+        permlink = permlink.lower()  # STEEM permlinks must be all lowercase
+        return permlink
 
 
 def run(args):
