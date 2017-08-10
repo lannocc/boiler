@@ -167,8 +167,6 @@ class Market():
         body += "\nAlpha Griffin Boiler bot](https://github.com/AlphaGriffin/boiler)"
         body += "\nv" + __version__ + "*</center>"
 
-        print(body)  # FIXME
-
         permlink = self.make_permlink(now)
         tries = 0
         post = None
@@ -176,8 +174,6 @@ class Market():
         while tries < self.max_tries:
             try:
                 log.info("Posting summary...", permlink=permlink, title=title, last=laststr, tags=tags)
-
-                break  # FIXME
 
                 post = self.commit.post(
                         permlink = permlink,
