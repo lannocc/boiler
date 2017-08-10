@@ -81,7 +81,7 @@ class Market():
             else:
                 change_pricestr = symbol + str(change_price.quantize(quant))
 
-            change_pct = (Decimal('100') * change_price / prev_last).quantize(Decimal('0.0'))
+            change_pct = (Decimal('100') * change_price / prev_last).quantize(Decimal('0.00'))
             if change_pct < Decimal('0'):
                 change_pctstr = str(change_pct.copy_negate()) + '%'
             else:
