@@ -1,6 +1,8 @@
 Copyright (C) 2017 Alpha Griffin
 @%@~LICENSE~@%@
 
+saw_081117_2 - Use code that is compatible with older versions of matplotlib (e.g. 1.4.3).
+
 saw_081117_1 - Market mode now has graphing!
 
 saw_081017_4 - Use two decimal points for change percentage.

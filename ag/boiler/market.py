@@ -104,10 +104,12 @@ class Market():
             highest = last
             lowest = last
 
-            fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(10,7))
+            fig = plt.figure(figsize=(10,7), facecolor='k')
+            ax = fig.add_subplot(1,1,1)
+            rect = ax.patch
+            rect.set_facecolor('k')
             img_title = self.symbol + '-' + self.against + ' at ' + nowstr
             plt.title(img_title)
-            ax.set_facecolor('k')
             ax.xaxis_date()
             plt.xticks(rotation=25)
             ax.xaxis.set_major_formatter(DateFormatter('%Y-%m-%d %H:%M'))

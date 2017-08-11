@@ -14,6 +14,7 @@ Requires the following Python modules installed:
 
 * appdirs
 * ag.logging (aka logpy: https://git.alphagriffin.com/AlphaGriffin/logpy)
+* matplotlib (for market mode graphs)
 * steemit
 
 
