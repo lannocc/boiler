@@ -28,7 +28,7 @@ Some of this script logic also taken from:
 
 NS      = 'ag'                          # namespace / meta-package folder
 NAME    = 'boiler'                      # should match source package name in NS folder
-REQUIRE = [ 'appdirs', 'logging', 'steem', 'sphinx_rtd_theme' ]
+REQUIRE = [ 'appdirs', 'logging', 'matplotlib', 'steem', 'sphinx_rtd_theme' ]
 
 DESC    = 'Python Steemit bot for automatically following people posting with specified tags'
 TAGS    = 'steem steemit bot utilities' # space-separated list of keywords

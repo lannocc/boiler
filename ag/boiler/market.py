@@ -7,7 +7,15 @@ from decimal import Decimal
 from time import sleep
 from tzlocal import get_localzone
 from os import path
+from urllib.parse import urlencode
+from urllib.request import urlopen, Request
+import base64
+import json
+import io
 
+import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D, TICKLEFT, TICKRIGHT
+from matplotlib.dates import DateFormatter
 from steem import Steem
 from steem.commit import Commit
 from steembase.exceptions import RPCError
@@ -23,6 +31,8 @@ log.debug("Account credentials loaded", id=account.id, key=mask(account.key))
 
 class Market():
 
+    testing = False
+
     def __init__(self, commit, api, pair, max_tries=60):
         self.commit = commit
         self.api = api
@@ -37,6 +47,9 @@ class Market():
 
     def summarize(self, title, tags):
         log.info("Summarizing market...", symbol=self.symbol, against=self.against)
+
+        if self.testing:
+            log.info("TESTING MODE ENABLED")
 
         ticker = self.api.ticker()
         try:
@@ -62,6 +75,7 @@ class Market():
 
         nowfile = path.join(dir, 'market.'+self.symbol+'-'+self.against+'.time')
         lastfile = path.join(dir, 'market.'+self.symbol+'-'+self.against+'.last')
+        img_url = None
 
         if path.exists(nowfile) and path.exists(lastfile):
             prev = True
@@ -87,19 +101,37 @@ class Market():
             else:
                 change_pctstr = str(change_pct) + '%'
 
-            data = self.api.chartData(
-                    pair=self.against+'_'+self.symbol,
-                    start=int(prev_now.strftime("%s"))+1,
-                    period=300
-                    )
-
             highest = last
             lowest = last
 
+            fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(10,7))
+            img_title = self.symbol + '-' + self.against + ' at ' + nowstr
+            plt.title(img_title)
+            ax.set_facecolor('k')
+            ax.xaxis_date()
+            plt.xticks(rotation=25)
+            ax.xaxis.set_major_formatter(DateFormatter('%Y-%m-%d %H:%M'))
+
+            # first graph 30-minute candlesticks
+            log.info("Plotting 30-minute candlesticks...")
+
+            data = self.api.chartData(
+                    pair=self.against+'_'+self.symbol,
+                    start=int(prev_now.strftime("%s"))+1,
+                    period=1800
+                    )
+
             if len(data) < 0:
                 raise ValueError("No data returned")
-            elif len(data) == 1 and int(data[0]['date']) == 0:
-                raise ValueError("Too soon! You must wait at least 5 minutes between summaries.")
+            elif len(data) == 1:
+                try:
+                    error = data['error']
+                    log.error("Received error from API", error=error)
+                    raise ValueError("Received error from API: {}".format(error))
+
+                except KeyError:
+                    if int(data[0]['date']) == 0:
+                        raise ValueError("Too soon! You must wait at least 30 minutes between summaries for candlesticks.")
 
             for row in data:
                 high = Decimal(row['high'])
@@ -110,8 +142,112 @@ class Market():
                 if low < lowest:
                     lowest = low
 
+                time = datetime.fromtimestamp(int(row['date']))
+                popen = Decimal(row['open'])
+                close = Decimal(row['close'])
+
+                if close >= popen:
+                    color = 'g'
+                else:
+                    color = 'r'
+
+                vline = Line2D(xdata=(time, time), ydata=(low, high),
+                        linewidth=1.5, color=color, antialiased=False)
+                oline = Line2D(xdata=(time, time), ydata=(popen, popen),
+                        linewidth=1, color=color, antialiased=False, marker=TICKLEFT, markersize=7)
+                cline = Line2D(xdata=(time, time), ydata=(close, close),
+                        linewidth=1, color=color, antialiased=False, marker=TICKRIGHT, markersize=7)
+
+                ax.add_line(vline)
+                ax.add_line(oline)
+                ax.add_line(cline)
+
+            # then graph 5-minute lines
+            log.info("Plotting 5-minute lines...")
+
+            data = self.api.chartData(
+                    pair=self.against+'_'+self.symbol,
+                    start=int(prev_now.strftime("%s"))+1,
+                    period=300
+                    )
+
+            if len(data) < 0:
+                raise ValueError("No data returned")
+            elif len(data) == 1:
+                try:
+                    error = data['error']
+                    log.error("Received error from API", error=error)
+                    raise ValueError("Received error from API: {}".format(error))
+
+                except KeyError:
+                    if int(data[0]['date']) == 0:
+                        raise ValueError("Too soon! You must wait at least 5 minutes between summaries.")
+
+            begin = None
+
+            for row in data:
+                high = Decimal(row['high'])
+                if high > highest:
+                    highest = high
+
+                low = Decimal(row['low'])
+                if low < lowest:
+                    lowest = low
+
+                time = int(row['date'])
+                popen = Decimal(row['open'])
+                close = Decimal(row['close'])
+
+                if begin is None:
+                    begin = popen
+
+                line = Line2D(xdata=(datetime.fromtimestamp(time), datetime.fromtimestamp(time + 300)), ydata=(begin, close),
+                        linewidth=0.7, color='#FFFF00', antialiased=True)
+
+                ax.add_line(line)
+                begin = close
+
             higheststr = symbol + str(highest.quantize(quant))
             loweststr = symbol + str(lowest.quantize(quant))
+
+            ax.xaxis.grid(True, color='#555555', linestyle='dotted')
+            ax.yaxis.grid(True, color='#555555', linestyle='solid')
+            plt.tight_layout()
+            ax.autoscale_view()
+
+            # save image to file or memory buffer
+            if self.testing:
+                imgfile = '/tmp/' + self.symbol + '-' + self.against + '.png'
+                fig.savefig(imgfile)
+                log.info("Market graph PNG saved", file=imgfile)
+            else:
+                img = io.BytesIO()
+                fig.savefig(img, format='png')
+                img.seek(0)
+
+            plt.close(fig)
+
+            # now upload result to imgur
+            if not self.testing:
+                log.info("Uploading plot to imgur...")
+
+                img_b64 = base64.standard_b64encode(img.read())
+                client = 'bbe2ecf93d88915'
+                headers = {'Authorization': 'Client-ID ' + client}
+                imgur_data = {'image': img_b64, 'title': img_title}
+                req = Request(url='https://api.imgur.com/3/upload.json', data=urlencode(imgur_data).encode('ASCII'), headers=headers)
+                resp = urlopen(req).read()
+                resp = json.loads(resp)
+                log.debug("Got response from imgur", resp=resp)
+
+                if resp['success'] == True:
+                    img_url = resp['data']['link']
+                    log.info("Image uploaded successfully", url=img_url)
+
+                else:
+                    log.error("Non-successful response from imgur", resp=resp)
+                    raise ValueError("Non-successful response from imgur")
+
         else:
             prev = False
 
@@ -128,7 +264,7 @@ class Market():
             else:
                 body += "\nFlat"
             body += "\n-"
-            body += "\n" + self.symbol + "** "
+            body += "\n" + self.symbol + " **"
             if change_price > Decimal('0'):
                 body += "gained " + change_pricestr
             elif change_price < Decimal('0'):
@@ -149,6 +285,9 @@ class Market():
         if prev:
             body += "\n* Highest trade: *" + higheststr + "*"
             body += "\n* Lowest trade: *" + loweststr + "*"
+            if img_url is not None:
+                body += "\n"
+                body += "\n[![market activity plot](" + img_url + ")](" + img_url + ")"
         body += "\n"
         # TODO: insert chart here
         body += "\n---"
@@ -167,6 +306,9 @@ class Market():
         body += "\nAlpha Griffin Boiler bot](https://github.com/AlphaGriffin/boiler)"
         body += "\nv" + __version__ + "*</center>"
 
+        if self.testing:
+            print(body)
+
         permlink = self.make_permlink(now)
         tries = 0
         post = None
@@ -174,6 +316,10 @@ class Market():
         while tries < self.max_tries:
             try:
                 log.info("Posting summary...", permlink=permlink, title=title, last=laststr, tags=tags)
+
+                if self.testing:
+                    log.warn("Not actually going to post (testing mode)")
+                    break
 
                 post = self.commit.post(
                         permlink = permlink,
@@ -203,7 +349,9 @@ class Market():
             return True
 
         else:
-            log.error("Failed to post summary")
+            if not self.testing:
+                log.error("Failed to post summary")
+
             return False
 
     def make_permlink(self, when):
