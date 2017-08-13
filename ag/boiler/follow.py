@@ -46,7 +46,7 @@ def run(tags):
                             user = copy[i]
                             log.info("following user", user=user)
                             steem.follow(user, account=cred.id)
-                            del pending[i]
+                            del pending[0]
 
                         else:
                             log.warn("Waiting for more bandwidth before following another user")
