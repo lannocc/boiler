@@ -1,6 +1,8 @@
 Copyright (C) 2017 Alpha Griffin
 @%@~LICENSE~@%@
 
+saw_081317_2 - Make sure we don't try to follow ourselves!
+
 saw_081317_1 - Fix pending list deletion index.
 
 saw_081217_1 - Only follow users we're not already following. Add rudimentary bandwidth check.

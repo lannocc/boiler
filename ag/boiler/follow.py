@@ -56,12 +56,13 @@ def run(tags):
                 if post.is_main_post():
                     log.debug("found a top-level post", author=post.author, tags=post.tags)
 
-                    for tag in tags:
-                        if tag in post.tags:
-                            if post.author not in following:
-                                pending.append(post.author)
-                                following.append(post.author)
-                                break
+                    if post.author != cred.id:
+                        for tag in tags:
+                            if tag in post.tags:
+                                if post.author not in following:
+                                    pending.append(post.author)
+                                    following.append(post.author)
+                                    break
 
         except PostDoesNotExist as e:
             log.debug("Post has vanished", exception=e)
