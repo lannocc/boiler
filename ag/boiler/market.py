@@ -31,7 +31,7 @@ log.debug("Account credentials loaded", id=account.id, key=mask(account.key))
 
 class Market():
 
-    testing = True  # FIXME
+    testing = False
 
     def __init__(self, commit, api, pair, max_tries=60):
         self.commit = commit
