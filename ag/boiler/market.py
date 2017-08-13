@@ -224,8 +224,9 @@ class Market():
                     ath = highest
                     newath = True
 
-                    with open(athfile, 'w') as out:
-                        out.write(str(ath))
+                    if not testing:
+                        with open(athfile, 'w') as out:
+                            out.write(str(ath))
 
             ax.xaxis.grid(True, color='#555555', linestyle='dotted')
             ax.yaxis.grid(True, color='#555555', linestyle='solid')

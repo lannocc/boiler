@@ -1,6 +1,8 @@
 Copyright (C) 2017 Alpha Griffin
 @%@~LICENSE~@%@
 
+saw_081317_5 - Don't save new all-time-high if in testing mode.
+
 saw_081317_4 - Market mode Now tracks all-time-high.
 
 saw_081317_3 - Append latest action to market summary title.
