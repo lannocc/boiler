@@ -18,6 +18,8 @@ def usage():
     print("   market <pair> <title> <tag>...")
     print("                     - Automatically compose cryptocurrency market summary for the given currency pair,")
     print("                       using supplied title and tag(s)")
+    print("   market-ath <pair> <price>")
+    print("                     - Set all-time-high price for given currency pair.")
     print()
 
 from sys import argv, exit
@@ -57,6 +59,14 @@ with suppress(KeyboardInterrupt):
 
         from ag.boiler.market import run
         run(argv[2:])
+
+    elif argv[1] == 'market-ath':
+        if len(argv) != 4:
+            usage()
+            exit(5)
+
+        from ag.boiler.market import all_time_high
+        all_time_high(argv[2], argv[3])
 
     else:
         log.error("unknown command", command=argv[1])

@@ -84,6 +84,10 @@ This bot can automatically post a cryptocurrency market summary for any given cu
 
 The title you specify will be appended with a colon character followed by the latest action.
 
+You can also set the historical all-time-high for a currency pair. This only needs to be done once... if ``market`` mode is run regularly then the all-time-high will stay updated::
+
+    ./boiler market-ath btc-usdt 1234.56
+
 
 Support
 -------

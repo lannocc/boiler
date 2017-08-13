@@ -1,6 +1,8 @@
 Copyright (C) 2017 Alpha Griffin
 @%@~LICENSE~@%@
 
+saw_081317_4 - Market mode Now tracks all-time-high.
+
 saw_081317_3 - Append latest action to market summary title.
 
 saw_081317_2 - Make sure we don't try to follow ourselves!

@@ -31,7 +31,7 @@ log.debug("Account credentials loaded", id=account.id, key=mask(account.key))
 
 class Market():
 
-    testing = False
+    testing = True  # FIXME
 
     def __init__(self, commit, api, pair, max_tries=60):
         self.commit = commit
@@ -72,6 +72,9 @@ class Market():
             quant = Decimal('0.00000000')
         laststr = symbol + str(last.quantize(quant))
         log.debug("last trade", value=laststr)
+
+        ath = None
+        newath = False
 
         nowfile = path.join(dir, 'market.'+self.symbol+'-'+self.against+'.time')
         lastfile = path.join(dir, 'market.'+self.symbol+'-'+self.against+'.last')
@@ -212,6 +215,18 @@ class Market():
             higheststr = symbol + str(highest.quantize(quant))
             loweststr = symbol + str(lowest.quantize(quant))
 
+            athfile = path.join(dir, 'market.'+self.symbol+'-'+self.against+'.ath')
+            if path.exists(athfile):
+                with open(athfile, 'r') as infile:
+                    ath = Decimal(infile.readline().strip())
+
+                if highest > ath:
+                    ath = highest
+                    newath = True
+
+                    with open(athfile, 'w') as out:
+                        out.write(str(ath))
+
             ax.xaxis.grid(True, color='#555555', linestyle='dotted')
             ax.yaxis.grid(True, color='#555555', linestyle='solid')
             plt.tight_layout()
@@ -268,6 +283,9 @@ class Market():
             else:
                 body += "\nFlat"
                 title += ": Flat"
+            if newath:
+                body += " (New All Time High Achieved)"
+                title += " -- New All Time High!"
             body += "\n-"
             body += "\n" + self.symbol + " **"
             if change_price > Decimal('0'):
@@ -289,12 +307,13 @@ class Market():
         body += "\n* Last trade: *" + laststr + "*"
         if prev:
             body += "\n* Highest trade: *" + higheststr + "*"
+            if newath:
+                body += " (new all time high)"
             body += "\n* Lowest trade: *" + loweststr + "*"
             if img_url is not None:
                 body += "\n"
                 body += "\n[![market activity plot](" + img_url + ")](" + img_url + ")"
         body += "\n"
-        # TODO: insert chart here
         body += "\n---"
         body += "\n"
         body += "\n* Snapshot taken at *" + nowstr + "*"
@@ -363,6 +382,25 @@ class Market():
         permlink = 'market-summary-' + self.symbol + '-' + self.against + '-' + when.strftime('%Y-%m-%d-%H-%M-%S-%Z')
         permlink = permlink.lower()  # STEEM permlinks must be all lowercase
         return permlink
+
+
+def all_time_high(pair, price):
+    pair = pair.split('-')
+    if len(pair) != 2:
+        raise ValueError("Currency pair must be of the form XXX-YYY")
+
+    symbol = pair[0].upper()
+    against = pair[1].upper()
+
+    price = Decimal(price)
+    file = path.join(dir, 'market.'+symbol+'-'+against+'.ath')
+
+    log.info("Saving new all-time-high...", symbol=symbol, against=against, price=price, file=file)
+
+    with open(file, 'w') as out:
+        out.write(str(price))
+
+    print("All-time-high saved successfully.")
 
 
 def run(args):
