@@ -261,10 +261,13 @@ class Market():
         if prev:
             if change_pct > Decimal('0'):
                 body += "\nUp " + change_pctstr
+                title += ": Up " + change_pctstr
             elif change_pct < Decimal('0'):
                 body += "\nDown " + change_pctstr
+                title += ": Down " + change_pctstr
             else:
                 body += "\nFlat"
+                title += ": Flat"
             body += "\n-"
             body += "\n" + self.symbol + " **"
             if change_price > Decimal('0'):

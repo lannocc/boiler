@@ -82,6 +82,8 @@ This bot can automatically post a cryptocurrency market summary for any given cu
 
     ./boiler market btc-usdt "Summarizing the Bitcoin Market" bitcoin spam
 
+The title you specify will be appended with a colon character followed by the latest action.
+
 
 Support
 -------
